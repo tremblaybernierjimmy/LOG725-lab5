@@ -1,0 +1,42 @@
+sequenceDiagram
+autonumber
+Actor Joueur1
+participant Serveur
+participant Client
+Actor Joueur2
+
+Joueur1 ->> Serveur: Héberge une partie
+Joueur2 ->> Client: Rejoint la partie
+Client ->> Serveur: Se Connecte au Serveur
+Serveur -->> Client: Connection établie
+
+Joueur1 ->> Serveur: Entre un message et appuie sur le boutton envoyer
+Serveur ->> Client : Envoie le message à écrire
+Client ->> Client : Affiche le message dans l'interface
+
+loop Tant qu'on n'a pas gagné la partie
+    loop "Tant que le message reçu est plus petit que le message encodé"
+        Joueur2 ->> Client: Le joueur appuis sur une touche
+
+        alt Appuie sur espace
+            Client ->> Serveur: Notifie de l'envoie d'un trait (-)
+            Serveur ->> Serveur: Ajoute un trait au message
+            Serveur ->> Serveur: Met à jour le message dans l'itnerface
+        else Appuie sur .
+            Client ->> Serveur: Notifie de l'envoie d'un point (.)
+            Serveur ->> Serveur: Ajoute un point au message
+        Serveur ->> Serveur: Met à jour le message dans l'itnerface
+        end
+    end
+
+    Serveur ->> Serveur: Valide la réponse
+    alt Message reçu ne correspond pas au message envoyé
+        Serveur->> Serveur: Vide le message reçu
+        Serveur ->> Client: Notifie du mauvais message.
+        Client ->> Client: Affiche un message dans l'interface
+
+    else Message reçu correspond au message envoyé
+        Serveur ->> Client: Notifie de la victoire
+        Client ->> Client: Affiche un message dans l'interface
+    end
+end
